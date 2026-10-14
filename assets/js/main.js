@@ -127,6 +127,7 @@
     const left = Math.max(0, FREE_SHIP - total);
     $('#shipMsg').textContent = left ? `Add ${money(left)} more for free shipping` : 'Free shipping unlocked';
     $('#shipBar').style.width = Math.min(100, (total / FREE_SHIP) * 100) + '%';
+    $('#bagGive').textContent = total ? `$${(total * .05).toFixed(2)} of this order supports underprivileged football communities.` : '5% of every order supports underprivileged football communities.';
     $('#bagItems').innerHTML = bag.length ? bag.map((i, idx) => `
       <li class="bi">
         <img src="${IMG}${i.img}.webp" alt="" class="${i.flat ? 'contain' : ''}">
@@ -343,6 +344,21 @@
     if (h && label) { h.setAttribute('aria-label', label); $$('.line', h).forEach(l => l.setAttribute('aria-hidden', 'true')); }
   }
   $$('.split').forEach(splitChars);
+  // word-level split for long lines (keeps <em>)
+  function splitWords(el) {
+    const walk = node => [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(p => {
+          if (!p) return;
+          if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(' ')); return; }
+          const w = document.createElement('span'); w.className = 'rw'; w.style.display = 'inline-block'; w.textContent = p; frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) walk(n);
+    });
+    walk(el);
+  }
 
   // --- smooth scroll
   lenis = new Lenis({ lerp: .09, wheelMultiplier: 1, smoothWheel: true });
@@ -456,6 +472,29 @@
   $$('.eyebrow:not(.hero__eyebrow), .section-head__copy, .feature__copy p, .cta__copy').forEach(el => {
     gsap.from(el, { y: 24, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
   });
+
+  /* ---------- MISSION: "Sometimes it's" ---------- */
+  gsap.from('.reality__lead', { y: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '.reality__lead', start: 'top 85%' } });
+  $$('.reality__list li').forEach(li => ScrollTrigger.create({ trigger: li, start: 'top 62%', onEnter: () => li.classList.add('is-on'), onLeaveBack: () => li.classList.remove('is-on') }));
+  $$('.reality__end, .impact__sign').forEach(el => {
+    if (!$$('.ch', el).length) { splitWords(el); }
+    gsap.from($$('.ch, .rw', el), { yPercent: 110, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .02, scrollTrigger: { trigger: el, start: 'top 85%' } });
+  });
+
+  /* ---------- OUR NAME: acronym rows ---------- */
+  $$('.acro li').forEach(li => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: li, start: 'top 88%' } });
+    tl.from($('b', li), { yPercent: 100, duration: 1.1, ease: 'expo.out' })
+      .from($('span', li), { x: 80, opacity: 0, duration: 1.1, ease: 'expo.out' }, '<.1')
+      .from($('em', li), { opacity: 0, duration: .8 }, '<.3');
+  });
+  gsap.from('.beliefs p', { y: 40, opacity: 0, stagger: .1, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '.beliefs', start: 'top 88%' } });
+
+  /* ---------- IMPACT: 5% ---------- */
+  const imp = { v: 0 };
+  gsap.to(imp, { v: 5, duration: 1.8, ease: 'power3.out', scrollTrigger: { trigger: '.impact', start: 'top 70%' }, onUpdate: () => { $('#impactNum').textContent = Math.round(imp.v); } });
+  gsap.fromTo('.impact__num', { scale: .55, rotate: -6 }, { scale: 1, rotate: 0, ease: 'none', scrollTrigger: { trigger: '.impact', start: 'top bottom', end: 'top 25%', scrub: true } });
+  gsap.from('.impact__list li', { y: 50, opacity: 0, stagger: .1, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: '.impact__list', start: 'top 88%' } });
 
   /* ---------- CARDS ---------- */
   ScrollTrigger.batch('.grid .card', {
