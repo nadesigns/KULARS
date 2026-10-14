@@ -29,7 +29,7 @@
       desc: 'Full-zip hooded jacket in wine with orange sleeves and piping. K mark and player number on the chest, crest opposite.',
       variants: [{ c: 'Wine / Orange', hex: '#5a1f2a', imgs: ['jacket-turn', 'jacket-run'] }] },
     { id: 'coach', name: "Coaches' Track Jacket", tag: 'Staff', price: 110,
-      desc: 'Track jacket for the bench, in pitch green with mint sleeves and a full-length zip. Crest and K mark in club colours.',
+      desc: 'Track jacket for the bench, in pitch green with mint sleeves and a full-length zip. Crest and K mark in club colors.',
       variants: [{ c: 'Pitch Green / Mint', hex: '#1f5a3c', imgs: ['coach', 'hero-jacket'] }] },
     { id: 'bib', name: 'Training Bib', tag: 'Training', price: 14,
       desc: 'Lightweight training bib with the club crest and Kulars wordmark on the chest. Sold in sets for drills and small-sided games.',
@@ -89,7 +89,7 @@
         <div class="card__info">
           <div>
             <h3 class="card__name">${p.name}</h3>
-            <p class="card__sub" data-color>${p.variants.length > 1 ? p.variants.length + ' colours' : v.c}</p>
+            <p class="card__sub" data-color>${p.variants.length > 1 ? p.variants.length + ' colors' : v.c}</p>
             ${sw}
           </div>
           <span class="card__price">${money(p.price)}</span>
@@ -376,7 +376,7 @@
     if (document.body.classList.contains('menu-open')) { toggleMenu(false); setTimeout(go, 350); } else go();
   }));
 
-  // --- header behaviour + progress
+  // --- header behavior + progress
   const header = $('#header');
   lenis.on('scroll', ({ scroll, direction }) => {
     header.classList.toggle('is-scrolled', scroll > 30);

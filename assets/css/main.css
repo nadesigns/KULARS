@@ -1,6 +1,6 @@
 /* Layout concept: a matchday programme in motion. Dark tunnel-black opens and closes the page;
    the middle runs on kit-sand "paper" so the product reads like flats on a team sheet.
-   Colours are lifted straight from the Staten Island kit; brand indigo is reserved for Kulars moments. */
+   Colors are lifted straight from the Staten Island kit; brand indigo is reserved for Kulars moments. */
 :root {
   color-scheme: dark;
   --ink: #120e0c;          /* tunnel black, warm */
