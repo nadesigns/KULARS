@@ -394,14 +394,12 @@
   const arcs = $$('.loader__logo .km0, .loader__logo .km1, .loader__logo .km2, .loader__logo .km3');
   const legs = $$('.loader__logo .km4, .loader__logo .km5, .loader__logo .km6');
   const letters = $$('.loader__logo .kw');
-  const count = { v: 0 };
   const intro = gsap.timeline();
   intro
     .from(arcs, { scaleX: 0, transformOrigin: '0% 50%', duration: .7, ease: 'expo.out', stagger: .06 }, 0)
     .from(legs, { scaleY: 0, transformOrigin: '50% 0%', duration: .6, ease: 'expo.out', stagger: .06 }, .18)
     .from(letters, { yPercent: 60, opacity: 0, duration: .6, ease: 'expo.out', stagger: .045 }, .1)
-    .from('.loader__meta', { opacity: 0, y: 10, duration: .5 }, .2)
-    .to(count, { v: 100, duration: 1.05, ease: 'power2.inOut', onUpdate: () => { $('#loaderCount').textContent = String(Math.round(count.v)).padStart(2, '0'); } }, 0);
+    .from('.loader__meta', { opacity: 0, y: 10, duration: .5 }, .2);
 
   const heroImg = $('.hero__slide.is-active img');
   const imgReady = heroImg.decode ? heroImg.decode().catch(() => {}) : Promise.resolve();
@@ -505,7 +503,6 @@
 
   /* ---------- HORIZONTAL GALLERY ---------- */
   const track = $('#hsTrack'); const hsCards = $$('.hs-card', track);
-  $('#hsTotal').textContent = String(hsCards.length).padStart(2, '0');
   const dist = () => Math.max(0, track.scrollWidth - innerWidth);
   const hsTween = gsap.to(track, {
     x: () => -dist(), ease: 'none',
@@ -513,7 +510,6 @@
       trigger: '.hscroll', pin: true, start: 'top top', end: () => '+=' + dist(), scrub: 1, invalidateOnRefresh: true, anticipatePin: 1,
       onUpdate: self => {
         gsap.set('#hsBar', { scaleX: self.progress });
-        $('#hsIndex').textContent = String(Math.min(hsCards.length, Math.floor(self.progress * hsCards.length) + 1)).padStart(2, '0');
       }
     }
   });
@@ -557,7 +553,6 @@
   ptl.to(pk.slice(0, 4), { scaleX: 1, stagger: .2, ease: 'none' }).to(pk.slice(4), { scaleY: 1, stagger: .2, ease: 'none' });
   $$('.step').forEach(s => {
     gsap.fromTo(s, { opacity: .25 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: s, start: 'top 75%', end: 'top 45%', scrub: true } });
-    gsap.from($('.step__n', s), { yPercent: 100, opacity: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: s, start: 'top 80%' } });
   });
 
   /* ---------- CTA ---------- */
