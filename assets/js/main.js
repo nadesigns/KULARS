@@ -25,6 +25,11 @@
   const ALL = Object.fromEntries([...D.teamwear, ...D.fanwear].map(p => [p.id, p]));
   let lenis = null;
 
+  // on Shopify the theme prints the live catalog (keyed by each product's kulars:<id> tag); prices follow the store
+  const SHOP = window.KULARS_SHOP || null;
+  if (SHOP) Object.entries(SHOP).forEach(([id, sp]) => { if (ALL[id] && sp.variants[0]) ALL[id].price = sp.variants[0].p / 100; });
+  const shopVariant = (id, color, size) => SHOP && SHOP[id] && SHOP[id].variants.find(v => v.o[0] === color && (v.o[1] || 'One size') === size);
+
   /* =========================================================
      PRODUCT CARD
      ========================================================= */
@@ -122,7 +127,34 @@
   function closeBag() { bagEl.classList.remove('is-open'); bagEl.setAttribute('aria-hidden', 'true'); lenis && lenis.start(); }
   on($('#bagBtn'), 'click', openBag);
   $$('[data-close-bag]').forEach(b => on(b, 'click', closeBag));
-  on($('#checkoutBtn'), 'click', () => toast('Checkout runs through Shopify in the live build'));
+  // checkout: hand the bag to Shopify's cart, then go to Shopify checkout
+  on($('#checkoutBtn'), 'click', async () => {
+    if (!SHOP) { toast('Checkout runs through Shopify in the live build'); return; }
+    if (!bag.length) { toast("Your bag's empty"); return; }
+    const items = bag.map(i => ({ v: shopVariant(i.id, i.color, i.size), i }));
+    const missing = items.find(x => !x.v);
+    if (missing) { toast(`${missing.i.name} (${missing.i.color} · ${missing.i.size}) isn't available right now`); return; }
+    const btn = $('#checkoutBtn'); btn.disabled = true; btn.classList.add('is-busy');
+    try {
+      await fetch('/cart/clear.js', { method: 'POST' });
+      const r = await fetch('/cart/add.js', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ items: items.map(x => ({ id: x.v.id, quantity: x.i.qty })) })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).description || 'Something went wrong');
+      store.set('kulars-checkout', true);
+      location.href = '/checkout';
+    } catch (err) {
+      toast(err.message); btn.disabled = false; btn.classList.remove('is-busy');
+    }
+  });
+  // back from a finished order: Shopify empties its cart, so empty the bag too
+  if (SHOP && store.get('kulars-checkout', false)) {
+    fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(r => r.json()).then(c => {
+      if (!c.item_count) { bag = []; renderBag(); }
+      store.set('kulars-checkout', false);
+    }).catch(() => {});
+  }
   renderBag();
 
   /* =========================================================

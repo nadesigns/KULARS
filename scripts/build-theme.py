@@ -75,6 +75,19 @@ def section_file(name, body):
     return body + '\n{% schema %}\n' + json.dumps(schema, indent=2) + '\n{% endschema %}\n'
 
 
+# live Shopify catalog for main.js, keyed by each product's kulars:<id> tag
+SHOP_CATALOG = """<script>window.KULARS_SHOP = {
+{%- for product in collections.all.products -%}
+  {%- assign kid = '' -%}
+  {%- for tag in product.tags -%}{%- if tag contains 'kulars:' -%}{%- assign kid = tag | remove_first: 'kulars:' -%}{%- endif -%}{%- endfor -%}
+  {%- if kid != blank -%}
+  {{ kid | json }}: { "url": {{ product.url | json }}, "variants": [{%- for v in product.variants -%}{ "id": {{ v.id }}, "o": {{ v.options | json }}, "a": {{ v.available | json }}, "p": {{ v.price }} }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}] },
+  {%- endif -%}
+{%- endfor -%}
+};</script>
+"""
+
+
 def build_layout():
     home = read('index')
     other = read('clubs')
@@ -90,7 +103,7 @@ def build_layout():
     bottom = liquid_assets(route_links(bottom))
     bottom = bottom.replace('<script src="{{ \'data.js\' | asset_url }}"></script>',
                             '<script>window.KULARS_IMG = {{ \'walk.webp\' | asset_url | split: \'walk.webp\' | first | json }}; window.KULARS_ROUTES = { cart: {{ routes.cart_url | json }} };</script>\n'
-                            '<script src="{{ \'data.js\' | asset_url }}"></script>')
+                            + SHOP_CATALOG + '<script src="{{ \'data.js\' | asset_url }}"></script>')
 
     head = liquid_assets(head)
     head = re.sub(r'<title>.*?</title>', '<title>{{ kulars_title }}</title>', head)

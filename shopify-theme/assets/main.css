@@ -623,6 +623,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .bi__price { font: 600 14px/1.2 var(--f-body); text-align: right; }
 .bi__remove { display: block; margin-top: 8px; font-size: 12px; text-decoration: underline; color: var(--muted-dark); margin-left: auto; }
 .bag__foot { padding: 20px 24px 24px; border-top: 1px solid var(--line-dark); display: grid; gap: 14px; }
+#checkoutBtn.is-busy { opacity: .6; pointer-events: none; cursor: progress; }
 .bag__total { display: flex; justify-content: space-between; font-weight: 600; font-size: 17px; }
 .bag__total b { font-weight: 600; }
 .bag__give { margin: -6px 0 0; font-size: 13px; color: var(--indigo); font-weight: 500; }
