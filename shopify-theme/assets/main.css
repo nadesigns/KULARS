@@ -1094,3 +1094,65 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* ---------- touch, Safari & small screens ---------- */
+html { -webkit-tap-highlight-color: transparent; }
+a, button, summary, label, select, [role="button"] { touch-action: manipulation; }
+.menu, .qv__panel, .bag__items, .fpanel__groups { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.bag__panel { height: 100%; max-height: 100dvh; }
+.bag__foot { padding-bottom: 28px; }
+.bag.is-open .bi { animation: bag-in .55s var(--ease-out) both; }
+.bag.is-open .bi:nth-child(2) { animation-delay: .05s; } .bag.is-open .bi:nth-child(3) { animation-delay: .1s; } .bag.is-open .bi:nth-child(n+4) { animation-delay: .15s; }
+@keyframes bag-in { from { opacity: 0; transform: translateX(24px); } }
+.bag__items.is-busy { opacity: .55; pointer-events: none; transition: opacity .2s; }
+.is-added { animation: added .5s var(--ease-out); }
+@keyframes added { 40% { transform: scale(.96); } }
+
+/* touch: everything that hover reveals on desktop is simply there, and every target is thumb-sized */
+@media (hover: none) {
+  .card__quick { transform: none; }
+  .card:hover .card__media img { transform: none; }
+  .card:hover .card__media .img-b { clip-path: inset(100% 0 0 0); }
+  .btn:active, .card__quick:active, .sizes button:active, .filters button:active, .pdp__color:active,
+  .bag-btn:active, .menu-btn:active, .qty button:active, .bcard__add:active, .kitchip:active, .tile:active, .subcat:active { transform: scale(.96); transition: transform .12s; }
+  .sw { position: relative; }
+  .sw::after { content: ""; position: absolute; inset: -11px; }
+  .card__swatches { gap: 14px; margin-top: 10px; }
+  .crumbs a { display: inline-block; padding: 14px 0; margin: -14px 0; }
+  .link-arrow { padding-block: 10px 6px; }
+  .footer__cols a { display: inline-block; padding-block: 7px; }
+  .hero__dots button { height: 40px; }
+  .filters button { height: 40px; }
+  .qty button { width: 40px; height: 40px; }
+  .bi__remove { padding: 10px 0 10px 12px; margin-top: 2px; }
+  .bag__head button, .fpanel__close { width: 44px; height: 44px; }
+  .cline__remove { display: inline-block; padding: 10px 0; }
+  .cline__qty a { width: 44px; }
+  .cartpage__update { padding: 12px; }
+}
+/* iOS Safari zooms into any field under 16px */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/* quick view becomes a bottom sheet on phones and tablets, Add to bag always in reach */
+@media (max-width: 900px) {
+  .qv { padding: 0; place-items: end stretch; }
+  .qv__panel {
+    width: 100%; max-height: calc(100dvh - 48px); border-radius: 18px 18px 0 0;
+    clip-path: none; transform: translateY(100%); transition: transform .65s var(--ease);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .qv.is-open .qv__panel { clip-path: none; transform: none; }
+  .qv__panel::before { content: ""; position: absolute; top: 8px; left: 50%; z-index: 4; width: 40px; height: 4px; margin-left: -20px; border-radius: 4px; background: rgba(255,255,255,.85); box-shadow: 0 0 0 1px rgba(11,13,28,.12); }
+  .qv__close { position: sticky; top: 12px; grid-row: 1; justify-self: end; margin: 12px 12px -56px 0; }
+  .qv__gallery { grid-row: 2; grid-auto-columns: max-content; }
+  .qv__gallery img { width: auto; height: min(46dvh, 104vw); }
+  .qv__info { grid-row: 3; padding-bottom: 20px; }
+  #qvAdd { position: sticky; bottom: 12px; z-index: 2; box-shadow: 0 0 0 12px var(--paper), 0 -18px 28px 12px rgba(255,255,255,.9); }
+}
+
+/* ---------- footer credit ---------- */
+.footer__credit a { color: var(--light); background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; padding-bottom: 2px; transition: color .3s, background-size .35s var(--ease-out); }
+.footer__credit a:hover { color: var(--accent); background-size: 0 1px; background-position: 100% 100%; }
+@media (hover: none) { .footer__credit a { display: inline-block; padding-block: 10px; margin-block: -10px; } }

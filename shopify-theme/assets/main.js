@@ -244,7 +244,7 @@
       if (motion) gsap.fromTo('#qvSizes', { x: -8 }, { x: 0, duration: .5, ease: 'elastic.out(1,.3)' });
       return;
     }
-    addToBag(qvState.p, qvState.v, qvState.size).then(ok => { if (ok) { closeQV(); setTimeout(openBag, 450); } });
+    addToBag(qvState.p, qvState.v, qvState.size).then(ok => { if (ok) { flashAdded($('#qvAdd')); setTimeout(closeQV, 350); setTimeout(openBag, 800); } });
   });
 
   /* =========================================================
@@ -305,7 +305,7 @@
       addBtn.classList.add('is-busy');
       const ok = await addVariant(id, P.title);
       addBtn.classList.remove('is-busy');
-      if (ok) setTimeout(openBag, 250);
+      if (ok) { flashAdded(addBtn, () => paint(false)); setTimeout(openBag, 450); }
     });
     paint(false);
 
@@ -315,6 +315,31 @@
       const more = range.filter(x => x !== kp).slice(0, 4);
       if (more.length) { $('#pdpMoreGrid').innerHTML = more.map(x => cardHTML(x)).join(''); $('#pdpMore').hidden = false; }
     }
+  }
+
+  /* =========================================================
+     DRAWERS ON TOUCH: own scrolling, swipe to dismiss
+     ========================================================= */
+  // Lenis cancels wheel and touch while stopped; drawers scroll themselves, so it must leave them alone
+  $$('#qv, #bag, .fpanel').forEach(el => el.setAttribute('data-lenis-prevent', ''));
+  function swipeClose(el, axis, close, canStart) {
+    if (!el) return;
+    let x0 = 0, y0 = 0, live = false;
+    on(el, 'touchstart', e => { live = !canStart || canStart(e); const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
+    on(el, 'touchend', e => {
+      if (!live) return; live = false;
+      const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+      if (axis === 'y' ? dy > 90 && Math.abs(dx) < dy * .6 : dx > 90 && Math.abs(dy) < dx * .6) close();
+    }, { passive: true });
+  }
+  swipeClose($('.qv__panel'), 'y', closeQV, () => mobileQ.matches && $('.qv__panel').scrollTop <= 0);
+  swipeClose($('.bag__panel'), 'x', closeBag);
+  // a beat of confirmation on whichever add button did the adding
+  function flashAdded(btn, restore) {
+    const label = $('span', btn); if (!label) return;
+    const was = label.textContent;
+    label.textContent = 'Added'; btn.classList.remove('is-added'); void btn.offsetWidth; btn.classList.add('is-added');
+    setTimeout(() => { if (restore) restore(); else label.textContent = was; }, 1300);
   }
 
   /* =========================================================
