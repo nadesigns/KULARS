@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "kulars-main-search",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

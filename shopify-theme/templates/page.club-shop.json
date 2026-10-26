@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "kulars-club-shop",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

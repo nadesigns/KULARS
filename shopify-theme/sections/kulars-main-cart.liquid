@@ -1,0 +1,19 @@
+<section class="section">
+  <div class="wrap">
+    <h1 class="h-display">Your bag</h1>
+    {% if cart.item_count > 0 %}
+      <form action="{{ routes.cart_url }}" method="post">
+        <ul>{% for item in cart.items %}<li>{{ item.quantity }} × {{ item.title }} — {{ item.final_line_price | money }}</li>{% endfor %}</ul>
+        <button class="btn" type="submit" name="checkout"><span>Checkout</span></button>
+      </form>
+    {% else %}<p>Your bag is empty.</p>{% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Cart",
+  "tag": "div",
+  "class": "kulars-section"
+}
+{% endschema %}

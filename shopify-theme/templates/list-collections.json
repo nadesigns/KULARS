@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "kulars-main-list",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

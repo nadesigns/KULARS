@@ -2,3 +2,4 @@
 .playwright-mcp/
 .vercel/
 node_modules/
+shopify-theme/.shopify/

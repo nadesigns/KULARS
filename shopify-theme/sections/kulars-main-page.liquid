@@ -1,0 +1,22 @@
+{%- case page.handle -%}
+  {%- when 'teamwear' -%}{% render 'kulars-page-teamwear' %}
+  {%- when 'club-shop' -%}{% render 'kulars-page-club-shop' %}
+  {%- when 'clubs' -%}{% render 'kulars-page-clubs' %}
+  {%- when 'our-story' -%}{% render 'kulars-page-our-story' %}
+  {%- when 'custom-kits' -%}{% render 'kulars-page-custom-kits' %}
+  {%- else -%}
+<section class="section">
+  <div class="wrap">
+    <h1 class="h-display">{{ page.title }}</h1>
+    <div class="rte">{{ page.content }}</div>
+  </div>
+</section>
+{%- endcase -%}
+
+{% schema %}
+{
+  "name": "Main Page",
+  "tag": "div",
+  "class": "kulars-section"
+}
+{% endschema %}

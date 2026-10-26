@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "kulars-custom-kits",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

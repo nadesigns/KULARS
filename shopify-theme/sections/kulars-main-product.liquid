@@ -1,0 +1,15 @@
+<section class="section">
+  <div class="wrap">
+    <h1 class="h-display">{{ product.title }}</h1>
+    <p>{{ product.price | money }}</p>
+    <div class="rte">{{ product.description }}</div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Product",
+  "tag": "div",
+  "class": "kulars-section"
+}
+{% endschema %}

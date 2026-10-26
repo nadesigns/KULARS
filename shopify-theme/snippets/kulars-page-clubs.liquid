@@ -1,0 +1,68 @@
+<section class="phero phero--clubs" data-section="page-banner">
+  <div class="phero__media"><img src="{{ 'walk.webp' | asset_url }}" alt="" fetchpriority="high"></div>
+  <div class="phero__content wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Clubs</span></nav>
+    <h1 class="phero__title"><span class="line"><span class="split">Clubs in Kulars</span></span></h1>
+    <p class="phero__lede">The teams that train, travel and play in our kit. Every club we make for sends 5% of every piece back to grassroots football.</p>
+  </div>
+</section>
+
+<!-- ============ FEATURED CLUB ============ -->
+<section class="spotlight wrap" data-section="featured-club">
+  <div class="spotlight__media">
+    <figure class="spotlight__main" data-reveal><img src="{{ 'singlet-pair.webp' | asset_url }}" alt="Staten Island Athletic SC players passing in Kulars training singlets" loading="lazy"></figure>
+    <figure class="spotlight__a" data-reveal><img src="{{ 'keeper-1.webp' | asset_url }}" alt="Goalkeeper in the All-Weather Training Jacket" loading="lazy"></figure>
+    <figure class="spotlight__b" data-reveal><img src="{{ 'fan-scarf-up.webp' | asset_url }}" alt="Supporter holding a Monarchs scarf" loading="lazy"></figure>
+  </div>
+  <div class="spotlight__copy">
+    <p class="eyebrow">Featured club</p>
+    <h2 class="display"><span class="line"><span class="split">Staten Island</span></span><span class="line"><span class="split">Athletic SC</span></span></h2>
+    <dl class="spotlight__facts">
+      <div><dt>League</dt><dd>USL League Two</dd></div>
+      <div><dt>Home</dt><dd>Staten Island, NY</dd></div>
+    </dl>
+    <p>One of the clubs we kit. Singlets, rain jackets, bibs, coaches' wear and the bag that carries it all, plus a supporters' range for the stands.</p>
+    <p class="spotlight__kit-label">In the kit bag</p>
+    <div class="spotlight__kit" id="clubKit"></div>
+    <div class="spotlight__ctas">
+      <a href="/pages/club-shop" class="btn btn--dark magnetic"><span>Shop the supporters' range</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="/pages/teamwear" class="link-arrow">See the training kit <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIRECTORY ============ -->
+<section class="directory" id="directory" data-section="club-directory">
+  <div class="wrap">
+    <div class="directory__head">
+      <div>
+        <p class="eyebrow">Club directory</p>
+        <h2 class="display"><span class="line"><span class="split">Find your club</span></span></h2>
+      </div>
+      <p>Look up a club to shop its supporters' range, or filter by level to see who we kit.</p>
+    </div>
+    <div class="dfilters">
+      <label class="dfilters__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input type="search" id="clubSearch" placeholder="Search clubs" aria-label="Search clubs">
+      </label>
+      <div class="filters" id="levelFilters" role="group" aria-label="Level"></div>
+      <label class="toolbar__sort">
+        <span>Region</span>
+        <select id="regionSelect"><option value="all">All regions</option></select>
+      </label>
+    </div>
+    <div class="cgrid" id="clubGrid"></div>
+  </div>
+</section>
+
+<!-- ============ JOIN ============ -->
+<section class="pband pband--right" data-section="image-banner">
+  <div class="pband__media"><img src="{{ 'locker.webp' | asset_url }}" alt="" loading="lazy"></div>
+  <div class="pband__content">
+    <p class="eyebrow">Kit your club for 2027</p>
+    <h2 class="display"><span class="line"><span class="split">Your crest. Our K.</span></span></h2>
+    <p>Training kit, travel wear, bags and a supporters' shop, all built around your crest. Tell us about your club and we'll come back with a range.</p>
+    <a href="/pages/custom-kits" class="btn btn--light magnetic"><span>Start a custom kit</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</section>

@@ -1,0 +1,72 @@
+<!-- ============ COLLECTION HERO ============ -->
+<section class="phero phero--teamwear" data-section="collection-banner">
+  <div class="phero__media"><img src="{{ 'hero-drill.webp' | asset_url }}" alt="" fetchpriority="high"></div>
+  <div class="phero__content wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Teamwear</span></nav>
+    <h1 class="phero__title"><span class="line"><span class="split">Teamwear</span></span></h1>
+    <p class="phero__lede">Training, travel and warm-up wear built for clubs at every level. Every piece you buy sends 5% back to the game.</p>
+  </div>
+</section>
+
+<!-- ============ COLLECTION ============ -->
+<section class="collection" id="collection" data-source="teamwear" data-section="main-collection">
+  <div class="subcats wrap" id="subcats" aria-label="Categories"></div>
+
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar__inner wrap">
+      <button class="toolbar__filter" type="button" id="filterToggle" aria-controls="filterPanel" aria-expanded="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+        <span class="toolbar__label">Filters</span><b id="filterCount" hidden>0</b>
+      </button>
+      <p class="toolbar__count" id="resultCount" aria-live="polite"></p>
+      <div class="toolbar__chips" id="activeChips"></div>
+      <label class="toolbar__sort">
+        <span>Sort</span>
+        <select id="sortSelect">
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price, low to high</option>
+          <option value="price-desc">Price, high to low</option>
+          <option value="name">Name, A to Z</option>
+        </select>
+      </label>
+      <div class="toolbar__view" role="group" aria-label="Grid density">
+        <button type="button" data-cols="2" aria-label="Two per row"><i></i><i></i></button>
+        <button type="button" data-cols="3" aria-label="Three per row" aria-pressed="true"><i></i><i></i><i></i></button>
+        <button type="button" data-cols="4" aria-label="Four per row"><i></i><i></i><i></i><i></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="collection__body wrap">
+    <aside class="fpanel" id="filterPanel" aria-label="Filters" data-lenis-prevent>
+      <div class="fpanel__head"><h2>Filters</h2><button type="button" class="fpanel__close" data-close-filters aria-label="Close filters">×</button></div>
+      <div class="fpanel__groups" id="filterGroups"></div>
+      <div class="fpanel__foot">
+        <button type="button" class="btn btn--ghost-dark btn--sm" id="clearAll">Clear all</button>
+        <button type="button" class="btn btn--dark btn--sm" data-close-filters id="showResults">Show results</button>
+      </div>
+    </aside>
+    <div class="fscrim" data-close-filters></div>
+
+    <div class="collection__results">
+      <div class="pgrid" id="pgrid"></div>
+      <div class="empty" id="emptyState" hidden>
+        <svg viewBox="0 0 160 188" fill="currentColor" aria-hidden="true"><use href="#k-mark"/></svg>
+        <h3>Nothing matches those filters</h3>
+        <p>Try a different size or color, or clear the filters to see the full range.</p>
+        <button type="button" class="btn btn--dark btn--sm" id="emptyClear"><span>Clear filters</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROMO BAND ============ -->
+<section class="pband" data-section="image-banner">
+  <div class="pband__media"><img src="{{ 'walk.webp' | asset_url }}" alt="" loading="lazy"></div>
+  <div class="pband__content">
+    <p class="eyebrow">Custom kits</p>
+    <h2 class="display"><span class="line"><span class="split">Your crest. Our K.</span></span></h2>
+    <p>Every piece in the range can be made around your club's crest and colors, with names and numbers packed by player.</p>
+    <a href="/pages/custom-kits" class="btn btn--light magnetic"><span>Kit your club</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</section>

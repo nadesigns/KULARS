@@ -1,0 +1,16 @@
+<section class="section">
+  <div class="wrap">
+    <h1 class="h-display">{{ collection.title }}</h1>
+    {%- paginate collection.products by 24 -%}
+      <ul>{% for p in collection.products %}<li><a href="{{ p.url }}">{{ p.title }}</a> {{ p.price | money }}</li>{% endfor %}</ul>
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Collection",
+  "tag": "div",
+  "class": "kulars-section"
+}
+{% endschema %}

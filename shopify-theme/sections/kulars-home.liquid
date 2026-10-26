@@ -1,0 +1,208 @@
+<!-- ============ HERO ============ -->
+<section class="hero" data-section="hero">
+  <div class="hero__media" id="heroMedia">
+    <figure class="hero__slide is-active">
+      <div class="hero__frame">
+        <img src="{{ 'hero-drill.webp' | asset_url }}" alt="Players in Kulars training singlets and bibs during a drill" fetchpriority="high">
+        <div class="spots">
+          <a href="#teamwear" class="spot" data-open="singlet" data-x="49" data-y="34" data-side="left"></a>
+          <a href="#teamwear" class="spot" data-open="bib" data-x="70" data-y="31" data-side="right"></a>
+        </div>
+      </div>
+    </figure>
+    <figure class="hero__slide">
+      <div class="hero__frame">
+        <img src="{{ 'hero-jacket.webp' | asset_url }}" alt="Player warming up in the Kulars All-Weather Training Jacket">
+        <div class="spots">
+          <a href="#teamwear" class="spot" data-open="jacket" data-x="47" data-y="38" data-side="right"></a>
+        </div>
+      </div>
+    </figure>
+    <figure class="hero__slide">
+      <div class="hero__frame">
+        <img src="{{ 'coach.webp' | asset_url }}" alt="Coach in the Kulars track jacket">
+        <div class="spots">
+          <a href="#teamwear" class="spot" data-open="coach" data-x="62" data-y="44" data-side="right"></a>
+        </div>
+      </div>
+    </figure>
+  </div>
+  <div class="hero__shade"></div>
+
+  <div class="hero__content">
+    <p class="eyebrow hero__eyebrow"><svg viewBox="0 0 160 188" fill="currentColor"><use href="#k-mark"/></svg> Teamwear 26</p>
+    <h1 class="hero__title" aria-label="Wear the change">
+      <span class="line"><span class="split">Wear the</span></span>
+      <span class="line"><span class="split"><em>change.</em></span></span>
+    </h1>
+    <div class="hero__ctas">
+      <a href="#teamwear" class="btn btn--light magnetic"><span>Shop the kit</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="/pages/our-story" class="btn btn--ghost magnetic"><span>Our story</span></a>
+    </div>
+  </div>
+
+  <div class="hero__bar">
+    <div class="hero__dots" id="heroDots">
+      <button type="button" class="is-active" aria-label="Slide 1"><i></i></button>
+      <button type="button" aria-label="Slide 2"><i></i></button>
+      <button type="button" aria-label="Slide 3"><i></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOP STRIP ============ -->
+<section class="strip" data-section="rich-text">
+  <p class="strip__title">KULARS Official Shop</p>
+  <p class="strip__sub">Soccer-inspired apparel where every purchase has a purpose.</p>
+</section>
+
+<!-- ============ CATEGORY TILES ============ -->
+<section class="cats" aria-label="Shop by category" data-section="collection-list">
+  <a href="/pages/teamwear?cat=training" class="tile" data-cursor="Shop"><img src="{{ 'singlet-pair.webp' | asset_url }}" alt="Two players passing in training singlets" loading="lazy"><span class="tile__name">Training</span><span class="tile__cta">Shop now</span></a>
+  <a href="/pages/teamwear?cat=jackets" class="tile" data-cursor="Shop"><img src="{{ 'jacket-run.webp' | asset_url }}" alt="Player running in the All-Weather Training Jacket" loading="lazy"><span class="tile__name">Jackets</span><span class="tile__cta">Shop now</span></a>
+  <a href="/pages/club-shop" class="tile" data-cursor="Shop"><img src="{{ 'fan-hoodie-rust.webp' | asset_url }}" alt="Supporter in a crest hoodie" loading="lazy"><span class="tile__name">Fanwear</span><span class="tile__cta">Shop now</span></a>
+  <a href="/pages/teamwear?cat=bags" class="tile" data-cursor="Shop"><img src="{{ 'backpack.webp' | asset_url }}" alt="Kulars club backpack" loading="lazy"><span class="tile__name">Bags &amp; Gear</span><span class="tile__cta">Shop now</span></a>
+</section>
+
+<!-- ============ TEAMWEAR ROW ============ -->
+<section class="prow" id="teamwear" data-section="featured-collection">
+  <div class="prow__head">
+    <p class="eyebrow">Collection</p>
+    <h2 class="display"><span class="line"><span class="split">Teamwear</span></span></h2>
+    <p class="prow__copy">Training, travel and warm-up wear built for clubs at every level. Every piece sends 5% back to the game.</p>
+    <div class="prow__links"><a href="/pages/teamwear" class="btn btn--dark btn--sm"><span>Shop all teamwear</span></a><a href="/pages/custom-kits" class="link-arrow">Kit your club <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+  </div>
+  <div class="prow__body">
+    <div class="track" id="teamwearGrid"></div>
+    <div class="track__nav">
+      <button type="button" class="arrow" data-track="teamwearGrid" data-dir="-1" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+      <span class="track__bar"><i></i></span>
+      <button type="button" class="arrow" data-track="teamwearGrid" data-dir="1" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IMPACT BAND ============ -->
+<section class="impact" data-section="impact">
+  <div class="wrap impact__grid">
+    <div class="impact__num" aria-label="5 percent"><span id="impactNum">5</span><i>%</i></div>
+    <div class="impact__copy">
+      <p class="eyebrow">Every purchase has a purpose</p>
+      <p class="impact__lede">of every product sold supports underprivileged football communities.</p>
+      <p>You're not simply buying something to wear. You're helping someone else get an opportunity to play.</p>
+    </div>
+    <ul class="impact__list">
+      <li><small>Helps provide</small><b>Equipment</b></li>
+      <li><small>Helps support</small><b>Training</b></li>
+      <li><small>Opens up</small><b>Programs</b></li>
+      <li><small>Puts a player</small><b>On the field</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ STORIES MOSAIC ============ -->
+<section class="stories" id="stories" data-section="stories">
+  <div class="stories__head wrap">
+    <h2 class="display"><span class="line"><span class="split">Clubs in Kulars</span></span></h2>
+    <p>Our kit on the pitch, in the stands and on the clubs we partner with.</p>
+  </div>
+  <div class="mosaic">
+    <a href="/pages/clubs" class="m m--half" data-cursor="View" data-club><img src="{{ 'walk.webp' | asset_url }}" alt="Staten Island Athletic SC squad walking off the pitch in Kulars kit" loading="lazy"><span class="m__tag">Featured club</span><span class="m__cap">Staten Island Athletic SC</span></a>
+    <a href="/pages/clubs" class="m m--half" data-cursor="View"><img src="{{ 'keeper-1.webp' | asset_url }}" alt="Goalkeeper warming up in the All-Weather Training Jacket" loading="lazy"><span class="m__cap">The All-Weather Jacket</span></a>
+    <a href="/pages/clubs" class="m m--quarter" data-cursor="View"><img src="{{ 'jacket-touch.webp' | asset_url }}" alt="Player juggling in the training jacket" loading="lazy"><span class="m__cap">First touch</span></a>
+    <a href="/pages/clubs" class="m m--quarter" data-cursor="View"><img src="{{ 'singlet-duo.webp' | asset_url }}" alt="Two players on the ball in singlet and jacket" loading="lazy"><span class="m__cap">One v one</span></a>
+    <a href="/pages/clubs" class="m m--quarter" data-cursor="View"><img src="{{ 'coach.webp' | asset_url }}" alt="Coach in the Kulars track jacket" loading="lazy"><span class="m__cap">Coaches' wear</span></a>
+    <a href="/pages/clubs" class="m m--quarter" data-cursor="View"><img src="{{ 'armband.webp' | asset_url }}" alt="Captain's armband with the Kulars K" loading="lazy"><span class="m__cap">Your crest. Our K.</span></a>
+    <a href="/pages/club-shop" class="m m--third" data-cursor="View"><img src="{{ 'locker.webp' | asset_url }}" alt="Locker with the club backpack and armband" loading="lazy"><span class="m__cap">Matchday locker</span></a>
+    <a href="/pages/club-shop" class="m m--third" data-cursor="View"><img src="{{ 'fan-scarf-up.webp' | asset_url }}" alt="Supporter holding a scarf above his head" loading="lazy"><span class="m__cap">From the stands</span></a>
+    <a href="/pages/clubs" class="m m--third" data-cursor="View"><img src="{{ 'keeper-2.webp' | asset_url }}" alt="Goalkeeper mid-stride in the training jacket" loading="lazy"><span class="m__cap">Keeper sessions</span></a>
+  </div>
+</section>
+
+<!-- ============ CLUB SHOP ROW ============ -->
+<section class="prow prow--shop" id="clubshop" data-section="collection-tabs">
+  <div class="prow__head">
+    <p class="eyebrow">Supporters</p>
+    <h2 class="display"><span class="line"><span class="split">Club Shop</span></span></h2>
+    <p class="prow__copy">Hoodies, tees, caps and scarves for the people in the stands. Same promise: 5% of every piece goes back to the game.</p>
+    <div class="filters" role="tablist" id="shopTabs">
+      <button role="tab" aria-selected="true" data-filter="all" type="button">All</button>
+      <button role="tab" aria-selected="false" data-filter="hoodies" type="button">Hoodies</button>
+      <button role="tab" aria-selected="false" data-filter="tees" type="button">Tees</button>
+      <button role="tab" aria-selected="false" data-filter="caps" type="button">Caps</button>
+      <button role="tab" aria-selected="false" data-filter="scarves" type="button">Scarves</button>
+    </div>
+    <a href="/pages/club-shop" class="link-arrow prow__all">Shop the full club shop <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+  <div class="prow__body">
+    <div class="track" id="shopGrid"></div>
+    <div class="track__nav">
+      <button type="button" class="arrow" data-track="shopGrid" data-dir="-1" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+      <span class="track__bar"><i></i></span>
+      <button type="button" class="arrow" data-track="shopGrid" data-dir="1" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUR STORY (pattern band) ============ -->
+<section class="story" id="mission" data-section="our-story">
+  <div class="story__pattern" aria-hidden="true"></div>
+  <div class="story__inner">
+    <p class="eyebrow">Our story</p>
+    <h2 class="display"><span class="line"><span class="split">Keeping Unity, Love</span></span><span class="line"><span class="split">And Respect in Society</span></span></h2>
+    <p class="story__lede">Soccer has a way of bringing people together. It doesn't ask where you were born, how much money your family makes or what neighborhood you come from. When the ball rolls onto the field, we are all part of the same game.</p>
+    <p class="story__body">But not every child gets the same opportunity to play it. Sometimes it's a pair of cleats. A uniform. A registration fee. Transportation to practice. Access to a field, a coach or a safe place to play. And sometimes, all a young athlete needs is for someone to <em>believe in them.</em></p>
+    <ol class="acro" aria-label="KULARS: Keeping Unity, Love And Respect in Society">
+      <li><b>K</b><span>Keeping</span></li>
+      <li><b>U</b><span>Unity</span></li>
+      <li><b>L</b><span>Love</span></li>
+      <li><b>A</b><span>And</span></li>
+      <li><b>R</b><span>Respect</span></li>
+      <li><b>S</b><span>in Society</span></li>
+    </ol>
+    <p class="story__sign">You wear KULARS. Someone else gets a chance.</p>
+    <a href="/pages/our-story" class="btn btn--light magnetic story__cta"><span>Read our story</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</section>
+
+<!-- ============ CUSTOM KITS ============ -->
+<section class="cta" id="custom" data-section="contact-form">
+  <div class="wrap cta__grid">
+    <div class="cta__intro">
+      <p class="eyebrow">Custom kits · Kit your club for 2027</p>
+      <h2 class="display"><span class="line"><span class="split">Let's build</span></span><span class="line"><span class="split">your kit.</span></span></h2>
+      <p class="cta__copy">Tell us about your club and we'll come back with a range, samples and a price per player. Every kit we make sends 5% back to grassroots football.</p>
+      <ol class="steps">
+        <li><h3>Brief</h3><p>Send your crest, colors and squad list.</p></li>
+        <li><h3>Design &amp; samples</h3><p>We draw the range and send samples to try.</p></li>
+        <li><h3>Production</h3><p>Names, numbers and crests, packed by player.</p></li>
+        <li><h3>Club shop live</h3><p>Your supporters' shop goes online. We ship it.</p></li>
+      </ol>
+    </div>
+    <form class="kit-form" id="kitForm" novalidate>
+      <div class="field"><input id="f-club" name="club" required placeholder=" " autocomplete="organization"><label for="f-club">Club name</label></div>
+      <div class="field"><input id="f-email" name="email" type="email" required placeholder=" " autocomplete="email"><label for="f-email">Email</label></div>
+      <div class="field-row">
+        <div class="field"><select id="f-level" name="level"><option>Semi-pro / USL2</option><option>Academy</option><option>High school / College</option><option>Amateur / Sunday league</option></select><label for="f-level" class="is-fixed">Level</label></div>
+        <div class="field"><input id="f-squad" name="squad" type="number" min="1" placeholder=" "><label for="f-squad">Squad size</label></div>
+      </div>
+      <fieldset class="chips">
+        <legend>What do you need?</legend>
+        <label><input type="checkbox" id="f-need-training" checked><span>Training kit</span></label>
+        <label><input type="checkbox" id="f-need-travel"><span>Travel wear</span></label>
+        <label><input type="checkbox" id="f-need-bags"><span>Bags &amp; accessories</span></label>
+        <label><input type="checkbox" id="f-need-shop" checked><span>Club shop</span></label>
+      </fieldset>
+      <button class="btn btn--indigo btn--full magnetic" type="submit"><span>Send the brief</span><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="kit-form__msg" id="formMsg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home",
+  "tag": "div",
+  "class": "kulars-section"
+}
+{% endschema %}

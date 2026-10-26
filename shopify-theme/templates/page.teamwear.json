@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "kulars-teamwear",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
