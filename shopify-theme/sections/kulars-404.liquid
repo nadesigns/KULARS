@@ -1,14 +1,16 @@
-<section class="section">
-  <div class="wrap">
-    <h1 class="h-display">Page not found</h1>
-    <p><a class="btn" href="/"><span>Back home</span></a></p>
+<section class="lost">
+  <div class="lost__pattern" aria-hidden="true"></div>
+  <div class="lost__inner wrap">
+    <p class="eyebrow lost__eyebrow">Error 404</p>
+    <h1 class="lost__title">Off<br><em>side.</em></h1>
+    <p class="lost__lede">That page isn't on the pitch. It may have moved, or the link is out of date.</p>
+    <div class="phero__ctas">
+      <a class="btn btn--light" href="/"><span>Back home</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--ghost" href="/pages/teamwear"><span>Shop teamwear</span></a>
+    </div>
   </div>
 </section>
 
 {% schema %}
-{
-  "name": "404",
-  "tag": "div",
-  "class": "kulars-section"
-}
+{ "name": "404", "tag": "div", "class": "kulars-section" }
 {% endschema %}

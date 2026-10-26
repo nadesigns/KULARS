@@ -1,0 +1,9 @@
+{%- if paginate.pages > 1 -%}
+  <nav class="pager" aria-label="Pagination">
+    {%- if paginate.previous -%}<a class="pager__step" href="{{ paginate.previous.url }}">← Prev</a>{%- endif -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>{%- elsif part.title == paginate.current_page -%}<span aria-current="page">{{ part.title }}</span>{%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+    {%- endfor -%}
+    {%- if paginate.next -%}<a class="pager__step" href="{{ paginate.next.url }}">Next →</a>{%- endif -%}
+  </nav>
+{%- endif -%}

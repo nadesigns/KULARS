@@ -76,7 +76,8 @@ def section_file(name, body):
 
 
 # live Shopify catalog for main.js, keyed by each product's kulars:<id> tag
-SHOP_CATALOG = """<script>window.KULARS_SHOP = {
+SHOP_CATALOG = """<script>window.KULARS_CART = {{ cart | json }};
+window.KULARS_SHOP = {
 {%- for product in collections.all.products -%}
   {%- assign kid = '' -%}
   {%- for tag in product.tags -%}{%- if tag contains 'kulars:' -%}{%- assign kid = tag | remove_first: 'kulars:' -%}{%- endif -%}{%- endfor -%}
@@ -101,11 +102,14 @@ def build_layout():
     top = mark_current(liquid_assets(route_links(unmark_current(top_other))))
     top = top.replace('<div class="cursor"', '{% if template.name == \'index\' %}' + loader.strip('\n') + '\n{% endif %}\n\n<div class="cursor"', 1)
     bottom = liquid_assets(route_links(bottom))
+    bottom = bottom.replace('Checkout connects to Shopify in the live build.', 'Shipping and taxes calculated at checkout.')
     bottom = bottom.replace('<script src="{{ \'data.js\' | asset_url }}"></script>',
                             '<script>window.KULARS_IMG = {{ \'walk.webp\' | asset_url | split: \'walk.webp\' | first | json }}; window.KULARS_ROUTES = { cart: {{ routes.cart_url | json }} };</script>\n'
                             + SHOP_CATALOG + '<script src="{{ \'data.js\' | asset_url }}"></script>')
 
     head = liquid_assets(head)
+    head = head.replace("""<link rel="stylesheet" href="{{ 'main.css' | asset_url }}">""",
+                        """<link rel="stylesheet" href="{{ 'main.css' | asset_url }}">\n<link rel="stylesheet" href="{{ 'kulars-shop.css' | asset_url }}">""")
     head = re.sub(r'<title>.*?</title>', '<title>{{ kulars_title }}</title>', head)
     head = re.sub(r'<meta name="description" content="[^"]*">',
                   '{% if kulars_desc != blank %}<meta name="description" content="{{ kulars_desc | escape }}">{% endif %}', head)
@@ -128,7 +132,12 @@ def build_layout():
     assign kulars_page = page.handle
   endif
   assign body_class = 'page-' | append: template.name
-  assign kulars_title = page_title | append: ' | ' | append: shop.name
+  assign kulars_title = page_title
+  assign title_check = page_title | downcase
+  assign shop_check = shop.name | downcase
+  unless title_check contains shop_check
+    assign kulars_title = page_title | append: ' | ' | append: shop.name
+  endunless
   assign kulars_desc = page_description
   case kulars_page
 """ + '\n'.join(whens) + f"""

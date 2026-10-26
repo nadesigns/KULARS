@@ -48,7 +48,7 @@
         </div>
         <div class="card__info">
           <div>
-            <h3 class="card__name">${p.name}</h3>
+            <h3 class="card__name">${SHOP && SHOP[p.id] ? `<a href="${SHOP[p.id].url}">${p.name}</a>` : p.name}</h3>
             <p class="card__sub">${p.variants.length > 1 ? p.variants.length + ' colors' : v.c}</p>
             ${sw}
           </div>
@@ -77,14 +77,41 @@
     const t = $('#toast'); t.textContent = msg; t.classList.add('is-on');
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('is-on'), 2600);
   }
-  $$('#searchForm, .menu__search').forEach(f => on(f, 'submit', e => { e.preventDefault(); toast('Search arrives with the Shopify build'); }));
+  // search: Shopify's product search in the live build, a note in the preview
+  $$('#searchForm, .menu__search').forEach(f => on(f, 'submit', e => {
+    e.preventDefault();
+    const q = $('input', f).value.trim();
+    if (!SHOP) { toast('Search arrives with the Shopify build'); return; }
+    if (q) location.href = `/search?type=product&q=${encodeURIComponent(q)}`;
+  }));
 
   /* =========================================================
      BAG
+     On Shopify the bag is the Shopify cart (Ajax API), so the drawer, the cart page,
+     product pages and checkout always agree. The preview keeps it in localStorage.
      ========================================================= */
-  let bag = store.get('kulars-bag', []);
+  let bag = SHOP ? [] : store.get('kulars-bag', []);
   const FREE_SHIP = 150;
   const bagEl = $('#bag');
+  const kidByHandle = SHOP ? Object.fromEntries(Object.entries(SHOP).map(([id, sp]) => [sp.url.split('/').pop(), id])) : {};
+  const cartApi = (path, body) => fetch(path, body ? {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body)
+  } : { headers: { Accept: 'application/json' } }).then(async r => {
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.description || j.message || 'Something went wrong, try again');
+    return j;
+  });
+  function fromCart(cart) {
+    bag = cart.items.map(it => {
+      const p = ALL[kidByHandle[it.handle]];
+      return {
+        key: it.key, name: it.product_title, sub: it.options_with_values.map(o => o.value).filter(v => v !== 'Default Title').join(' · '),
+        price: it.final_price / 100, qty: it.quantity, src: it.image ? it.image + (it.image.includes('?') ? '&' : '?') + 'width=240' : '', flat: !!(p && p.flat)
+      };
+    });
+    renderBag();
+  }
+  const syncCart = () => SHOP ? cartApi('/cart.js').then(fromCart).catch(() => {}) : Promise.resolve();
   function renderBag() {
     const count = bag.reduce((n, i) => n + i.qty, 0);
     const total = bag.reduce((n, i) => n + i.qty * i.price, 0);
@@ -97,65 +124,75 @@
     $('#bagGive').textContent = total ? `$${(total * .05).toFixed(2)} of this order supports underprivileged football communities.` : '5% of every order supports underprivileged football communities.';
     $('#bagItems').innerHTML = bag.length ? bag.map((i, idx) => `
       <li class="bi">
-        <img src="${IMG}${i.img}.webp" alt="" class="${i.flat ? 'contain' : ''}">
+        <img src="${i.src || IMG + i.img + '.webp'}" alt="" class="${i.flat ? 'contain' : ''}">
         <div>
           <h4>${i.name}</h4>
-          <p>${i.color} · ${i.size}</p>
+          <p>${i.sub || `${i.color} · ${i.size}`}</p>
           <div class="qty"><button type="button" data-q="-1" data-i="${idx}" aria-label="Decrease">−</button><span>${i.qty}</span><button type="button" data-q="1" data-i="${idx}" aria-label="Increase">+</button></div>
         </div>
         <div><div class="bi__price">${money(i.price * i.qty)}</div><button type="button" class="bi__remove" data-rm="${idx}">Remove</button></div>
       </li>`).join('')
       : `<li class="bag__empty"><b>Bag's empty</b>Kit yourself out from the training range.</li>`;
-    store.set('kulars-bag', bag);
+    if (!SHOP) store.set('kulars-bag', bag);
   }
-  function addToBag(p, vi, size) {
+  function bumpBag(name) {
+    const btn = $('#bagBtn'); btn.classList.remove('bump'); void btn.offsetWidth; btn.classList.add('bump');
+    toast(`${name} added to your bag`);
+  }
+  // resolves true once the item is in the bag
+  async function addToBag(p, vi, size) {
     const v = p.variants[vi];
+    if (SHOP) {
+      const sv = shopVariant(p.id, v.c, size);
+      if (!sv || !sv.a) { toast(`${p.name} in ${v.c} · ${size} is sold out`); return false; }
+      return addVariant(sv.id, p.name);
+    }
     const key = `${p.id}|${v.c}|${size}`;
     const ex = bag.find(i => i.key === key);
     if (ex) ex.qty++;
     else bag.push({ key, id: p.id, name: p.name, color: v.c, size, price: p.price, img: v.imgs[0], flat: !!p.flat, qty: 1 });
-    renderBag();
-    const btn = $('#bagBtn'); btn.classList.remove('bump'); void btn.offsetWidth; btn.classList.add('bump');
-    toast(`${p.name} added to your bag`);
+    renderBag(); bumpBag(p.name);
+    return true;
   }
-  on($('#bagItems'), 'click', e => {
+  async function addVariant(id, name, quantity = 1) {
+    try {
+      await cartApi('/cart/add.js', { id, quantity }); await syncCart(); bumpBag(name);
+      if (location.pathname === '/cart') location.reload();
+      return true;
+    }
+    catch (err) { toast(err.message); return false; }
+  }
+  on($('#bagItems'), 'click', async e => {
     const q = e.target.closest('[data-q]'); const rm = e.target.closest('[data-rm]');
-    if (q) { const it = bag[+q.dataset.i]; it.qty += +q.dataset.q; if (it.qty < 1) bag.splice(+q.dataset.i, 1); renderBag(); }
-    if (rm) { bag.splice(+rm.dataset.rm, 1); renderBag(); }
+    if (!q && !rm) return;
+    const idx = +(q ? q.dataset.i : rm.dataset.rm); const it = bag[idx];
+    const qty = rm ? 0 : it.qty + +q.dataset.q;
+    if (SHOP) {
+      $('#bagItems').classList.add('is-busy');
+      try {
+        fromCart(await cartApi('/cart/change.js', { id: it.key, quantity: Math.max(0, qty) }));
+        if (location.pathname === '/cart') location.reload();
+      } catch (err) { toast(err.message); }
+      $('#bagItems').classList.remove('is-busy');
+      return;
+    }
+    if (qty < 1) bag.splice(idx, 1); else it.qty = qty;
+    renderBag();
   });
   function openBag() { bagEl.classList.add('is-open'); bagEl.setAttribute('aria-hidden', 'false'); lenis && lenis.stop(); }
   function closeBag() { bagEl.classList.remove('is-open'); bagEl.setAttribute('aria-hidden', 'true'); lenis && lenis.start(); }
   on($('#bagBtn'), 'click', openBag);
   $$('[data-close-bag]').forEach(b => on(b, 'click', closeBag));
-  // checkout: hand the bag to Shopify's cart, then go to Shopify checkout
-  on($('#checkoutBtn'), 'click', async () => {
+  on($('#checkoutBtn'), 'click', () => {
     if (!SHOP) { toast('Checkout runs through Shopify in the live build'); return; }
     if (!bag.length) { toast("Your bag's empty"); return; }
-    const items = bag.map(i => ({ v: shopVariant(i.id, i.color, i.size), i }));
-    const missing = items.find(x => !x.v);
-    if (missing) { toast(`${missing.i.name} (${missing.i.color} · ${missing.i.size}) isn't available right now`); return; }
-    const btn = $('#checkoutBtn'); btn.disabled = true; btn.classList.add('is-busy');
-    try {
-      await fetch('/cart/clear.js', { method: 'POST' });
-      const r = await fetch('/cart/add.js', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ items: items.map(x => ({ id: x.v.id, quantity: x.i.qty })) })
-      });
-      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).description || 'Something went wrong');
-      store.set('kulars-checkout', true);
-      location.href = '/checkout';
-    } catch (err) {
-      toast(err.message); btn.disabled = false; btn.classList.remove('is-busy');
-    }
+    $('#checkoutBtn').classList.add('is-busy');
+    location.href = '/checkout';
   });
-  // back from a finished order: Shopify empties its cart, so empty the bag too
-  if (SHOP && store.get('kulars-checkout', false)) {
-    fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(r => r.json()).then(c => {
-      if (!c.item_count) { bag = []; renderBag(); }
-      store.set('kulars-checkout', false);
-    }).catch(() => {});
-  }
-  renderBag();
+  // back/forward cache can show a stale bag after checkout; re-read the cart whenever the page is shown
+  on(window, 'pageshow', () => { $('#checkoutBtn').classList.remove('is-busy'); syncCart(); });
+  if (SHOP && window.KULARS_CART) fromCart(window.KULARS_CART); else renderBag();
+  window.KULARS_BAG = { open: openBag, addVariant, sync: syncCart };
 
   /* =========================================================
      QUICK VIEW
@@ -168,7 +205,12 @@
     $('#qvGallery').innerHTML = imgs.map(src => `<img src="${IMG}${src}.webp" alt="${p.name}" class="${p.flat && src.startsWith('p-') ? 'contain' : ''}">`).join('');
     $('#qvColor').textContent = variant.c;
     $('#qvSwatches').innerHTML = p.variants.map((x, i) => `<button type="button" class="sw${i === v ? ' is-active' : ''}" style="background:${x.hex}" data-qv="${i}" aria-label="${x.c}"></button>`).join('');
+    if (SHOP) $$('#qvSizes [data-size]').forEach(b => { const sv = shopVariant(p.id, variant.c, b.dataset.size); b.classList.toggle('is-out', !sv || !sv.a); });
+    if (qvMore) qvMore.href = SHOP && SHOP[p.id] ? SHOP[p.id].url : '#';
   }
+  // live build: quick view links through to the full product page
+  const qvMore = SHOP ? document.createElement('a') : null;
+  if (qvMore) { qvMore.className = 'qv__more link-u'; qvMore.textContent = 'View full details'; $('#qvAdd').after(qvMore); }
   function openQV(id, vi) {
     const p = ALL[id]; if (!p) return;
     const card = document.querySelector(`.card[data-id="${id}"]`);
@@ -202,9 +244,78 @@
       if (motion) gsap.fromTo('#qvSizes', { x: -8 }, { x: 0, duration: .5, ease: 'elastic.out(1,.3)' });
       return;
     }
-    addToBag(qvState.p, qvState.v, qvState.size);
-    closeQV(); setTimeout(openBag, 450);
+    addToBag(qvState.p, qvState.v, qvState.size).then(ok => { if (ok) { closeQV(); setTimeout(openBag, 450); } });
   });
+
+  /* =========================================================
+     PRODUCT PAGE (Shopify): options pick the variant, Add to bag goes through the cart
+     ========================================================= */
+  const pdp = $('#pdp');
+  if (pdp && SHOP) {
+    const P = JSON.parse($('#pdpData').textContent);
+    const kp = ALL[pdp.dataset.kid];
+    const chosen = (P.variants.find(v => v.id === +$('#pdpVariant').value) || P.variants[0]).options.slice();
+    const form = $('#pdpForm'), addBtn = $('#pdpAdd');
+    // swatch dots take the catalog's colors; anything else gets a neutral dot
+    $$('.pdp__color', pdp).forEach(b => {
+      const cv = kp && kp.variants.find(x => x.c === b.dataset.value);
+      b.querySelector('i').style.background = cv ? cv.hex : 'var(--mist-2)';
+    });
+    const variantFor = opts => P.variants.find(v => v.options.every((o, i) => o === opts[i]));
+    function paint(scrollToMedia) {
+      const v = variantFor(chosen);
+      $$('.pdp__opt', pdp).forEach(fs => {
+        const i = +fs.dataset.index;
+        $('[data-selected]', fs).textContent = chosen[i];
+        $$('[data-value]', fs).forEach(b => {
+          const on = b.dataset.value === chosen[i];
+          b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on);
+          // a value is out when no available variant pairs it with the other current choices
+          const test = chosen.slice(); test[i] = b.dataset.value;
+          const tv = variantFor(test); b.classList.toggle('is-out', !tv || !tv.available);
+        });
+      });
+      const price = v ? v.price : P.price;
+      $('[data-price]', pdp).textContent = '$' + (price / 100).toFixed(price % 100 ? 2 : 0);
+      const cmp = $('[data-compare]', pdp);
+      cmp.hidden = !(v && v.compare_at_price > v.price);
+      if (!cmp.hidden) cmp.textContent = '$' + (v.compare_at_price / 100).toFixed(0);
+      $('#pdpVariant').value = v ? v.id : '';
+      addBtn.disabled = !v || !v.available;
+      $('span', addBtn).textContent = !v ? 'Unavailable' : v.available ? 'Add to bag' : 'Sold out';
+      if (v) history.replaceState(null, '', `${location.pathname}?variant=${v.id}`);
+      if (scrollToMedia && v && v.featured_media) {
+        const shot = $(`.pdp__shot[data-media="${v.featured_media.id}"]`, pdp);
+        if (shot) {
+          const gal = $('#pdpGallery');
+          if (gal.scrollWidth > gal.clientWidth + 4) gal.scrollTo({ left: shot.offsetLeft - gal.offsetLeft, behavior: 'smooth' });
+          else if (shot !== gal.firstElementChild) { gal.prepend(shot); if (motion) gsap.fromTo(shot, { opacity: .3 }, { opacity: 1, duration: .6 }); }
+        }
+      }
+    }
+    on(form, 'click', e => {
+      const b = e.target.closest('[data-value]'); if (!b) return;
+      const i = +b.closest('.pdp__opt').dataset.index;
+      chosen[i] = b.dataset.value;
+      paint(i === 0);
+    });
+    on(form, 'submit', async e => {
+      e.preventDefault();
+      const id = +$('#pdpVariant').value; if (!id) return;
+      addBtn.classList.add('is-busy');
+      const ok = await addVariant(id, P.title);
+      addBtn.classList.remove('is-busy');
+      if (ok) setTimeout(openBag, 250);
+    });
+    paint(false);
+
+    // more from the same range, drawn with the site's own cards
+    if (kp) {
+      const range = D.teamwear.includes(kp) ? D.teamwear : D.fanwear;
+      const more = range.filter(x => x !== kp).slice(0, 4);
+      if (more.length) { $('#pdpMoreGrid').innerHTML = more.map(x => cardHTML(x)).join(''); $('#pdpMore').hidden = false; }
+    }
+  }
 
   /* =========================================================
      ANNOUNCEMENT ROTATOR

@@ -1,0 +1,37 @@
+<section class="listing wrap">
+  <header class="listing__head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Search</span></nav>
+    <h1 class="listing__title">{% if search.performed %}Results{% else %}Search{% endif %}</h1>
+    <form class="listing__search" action="{{ routes.search_url }}" method="get" role="search">
+      <input type="hidden" name="type" value="product">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search kit, hoodies, caps" aria-label="Search products" autofocus>
+      <button class="btn btn--dark btn--sm" type="submit"><span>Search</span></button>
+    </form>
+    {%- if search.performed -%}
+      <p class="listing__count">{{ search.results_count }} {{ search.results_count | pluralize: 'result', 'results' }} for “{{ search.terms | escape }}”</p>
+    {%- endif -%}
+  </header>
+
+  {%- if search.performed -%}
+    {%- paginate search.results by 24 -%}
+      {%- if search.results_count > 0 -%}
+        <div class="listing__grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}{% render 'kulars-card', product: item %}{%- endif -%}
+          {%- endfor -%}
+        </div>
+        {% render 'kulars-pagination', paginate: paginate %}
+      {%- else -%}
+        <div class="listing__empty">
+          <p>Nothing matched that. Try “hoodie”, “jacket” or “cap”, or browse the range.</p>
+          <div class="phero__ctas"><a class="btn btn--dark" href="/pages/teamwear"><span>Teamwear</span></a><a class="btn btn--outline" href="/pages/club-shop"><span>Club shop</span></a></div>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Search", "tag": "div", "class": "kulars-section" }
+{% endschema %}

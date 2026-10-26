@@ -1,0 +1,73 @@
+{%- liquid
+  assign free_ship = 15000
+  assign left = free_ship | minus: cart.total_price
+-%}
+<section class="cartpage wrap">
+  <header class="cartpage__head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Bag</span></nav>
+    <h1 class="cartpage__title">Your bag <span>({{ cart.item_count }})</span></h1>
+  </header>
+
+  {%- if cart.item_count > 0 -%}
+    <form class="cartpage__grid" action="{{ routes.cart_url }}" method="post" id="cartForm">
+      <ul class="cartpage__items">
+        {%- for item in cart.items -%}
+          <li class="cline">
+            <a class="cline__img" href="{{ item.url }}">
+              {%- if item.image -%}{{ item.image | image_url: width: 400 | image_tag: alt: item.product.title, loading: 'lazy' }}{%- endif -%}
+            </a>
+            <div class="cline__body">
+              <h2 class="cline__name"><a href="{{ item.url }}">{{ item.product.title }}</a></h2>
+              {%- unless item.product.has_only_default_variant -%}
+                <p class="cline__opts">{% for o in item.options_with_values %}{{ o.value }}{% unless forloop.last %} · {% endunless %}{% endfor %}</p>
+              {%- endunless -%}
+              <div class="cline__row">
+                <label class="cline__qty">
+                  <span class="visually-hidden">Quantity for {{ item.product.title }}</span>
+                  <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | minus: 1 }}" aria-label="Decrease">−</a>
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric">
+                  <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | plus: 1 }}" aria-label="Increase">+</a>
+                </label>
+                <a class="cline__remove" href="{{ item.url_to_remove }}">Remove</a>
+              </div>
+            </div>
+            <p class="cline__price">{{ item.final_line_price | money_without_trailing_zeros }}</p>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <aside class="cartpage__sum">
+        <div class="cartpage__ship">
+          <p>{% if left > 0 %}Add {{ left | money_without_trailing_zeros }} more for free shipping{% else %}Free shipping unlocked{% endif %}</p>
+          <div class="bag__shipbar"><span style="width: {{ cart.total_price | times: 100 | divided_by: free_ship | at_most: 100 }}%"></span></div>
+        </div>
+        <div class="cartpage__row"><span>Subtotal</span><b>{{ cart.total_price | money }}</b></div>
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- for d in cart.cart_level_discount_applications -%}
+            <div class="cartpage__row cartpage__row--disc"><span>{{ d.title }}</span><b>−{{ d.total_allocated_amount | money }}</b></div>
+          {%- endfor -%}
+        {%- endif -%}
+        <p class="cartpage__give">{{ cart.total_price | times: 0.05 | money }} of this order supports underprivileged football communities.</p>
+        <label class="cartpage__note">
+          <span>Order note</span>
+          <textarea name="note" rows="3" placeholder="Club name, printing details, anything we should know">{{ cart.note }}</textarea>
+        </label>
+        <button class="btn btn--dark btn--full" type="submit" name="checkout"><span>Checkout</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button class="cartpage__update link-u" type="submit" name="update">Update bag</button>
+        <p class="bag__fine">Shipping and taxes calculated at checkout.</p>
+      </aside>
+    </form>
+  {%- else -%}
+    <div class="cartpage__empty">
+      <p>Your bag's empty. Kit yourself out from the training range or pick up something for matchday.</p>
+      <div class="phero__ctas">
+        <a class="btn btn--dark" href="/pages/teamwear"><span>Shop teamwear</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn--outline" href="/pages/club-shop"><span>Club shop</span></a>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Cart", "tag": "div", "class": "kulars-section" }
+{% endschema %}

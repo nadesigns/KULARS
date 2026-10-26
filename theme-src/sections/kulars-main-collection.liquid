@@ -1,0 +1,22 @@
+<section class="listing wrap">
+  <header class="listing__head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">{{ collection.title }}</span></nav>
+    <h1 class="listing__title">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}<div class="listing__lede rte">{{ collection.description }}</div>{%- endif -%}
+    <p class="listing__count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}</p>
+  </header>
+  {%- paginate collection.products by 24 -%}
+    {%- if collection.products.size > 0 -%}
+      <div class="listing__grid">
+        {%- for product in collection.products -%}{% render 'kulars-card', product: product %}{%- endfor -%}
+      </div>
+      {% render 'kulars-pagination', paginate: paginate %}
+    {%- else -%}
+      <div class="listing__empty"><p>Nothing here yet. New kit lands soon.</p><div class="phero__ctas"><a class="btn btn--dark" href="/pages/teamwear"><span>Shop teamwear</span></a></div></div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{ "name": "Collection", "tag": "div", "class": "kulars-section" }
+{% endschema %}

@@ -1,15 +1,140 @@
-<section class="section">
-  <div class="wrap">
-    <h1 class="h-display">{{ product.title }}</h1>
-    <p>{{ product.price | money }}</p>
-    <div class="rte">{{ product.description }}</div>
+{%- liquid
+  assign kid = ''
+  for tag in product.tags
+    if tag contains 'kulars:'
+      assign kid = tag | remove_first: 'kulars:'
+    endif
+  endfor
+  assign current = product.selected_or_first_available_variant
+  assign home_collection = collection
+  if home_collection == blank
+    if product.tags contains 'Club Shop'
+      assign crumb_label = 'Club Shop'
+      assign crumb_url = '/pages/club-shop'
+    elsif product.tags contains 'Teamwear'
+      assign crumb_label = 'Teamwear'
+      assign crumb_url = '/pages/teamwear'
+    endif
+  else
+    assign crumb_label = home_collection.title
+    assign crumb_url = home_collection.url
+  endif
+-%}
+<section class="pdp" id="pdp" data-kid="{{ kid }}">
+  <div class="pdp__grid wrap">
+    <div class="pdp__gallery" id="pdpGallery" aria-label="Product images">
+      {%- for media in product.media -%}
+        {%- if media.media_type == 'image' -%}
+          <figure class="pdp__shot" data-media="{{ media.id }}">
+            {%- if forloop.first -%}
+              {{ media | image_url: width: 1600 | image_tag: alt: product.title, widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 58vw, 100vw', fetchpriority: 'high' }}
+            {%- else -%}
+              {{ media | image_url: width: 1600 | image_tag: alt: product.title, widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 29vw, 100vw', loading: 'lazy' }}
+            {%- endif -%}
+          </figure>
+        {%- endif -%}
+      {%- else -%}
+        <figure class="pdp__shot pdp__shot--empty"><svg viewBox="0 0 160 188" fill="currentColor"><use href="#k-mark"/></svg></figure>
+      {%- endfor -%}
+    </div>
+
+    <div class="pdp__info">
+      <div class="pdp__sticky">
+        <nav class="crumbs pdp__crumbs" aria-label="Breadcrumb">
+          <a href="/">Home</a><span aria-hidden="true">/</span>
+          {%- if crumb_label -%}<a href="{{ crumb_url }}">{{ crumb_label }}</a><span aria-hidden="true">/</span>{%- endif -%}
+          <span aria-current="page">{{ product.title }}</span>
+        </nav>
+        {%- if product.type != blank -%}<p class="eyebrow pdp__type">{{ product.type }}</p>{%- endif -%}
+        <h1 class="pdp__title">{{ product.title }}</h1>
+        <p class="pdp__price" id="pdpPrice">
+          <span data-price>{{ current.price | money_without_trailing_zeros }}</span>
+          <s data-compare{% unless current.compare_at_price > current.price %} hidden{% endunless %}>{{ current.compare_at_price | money_without_trailing_zeros }}</s>
+        </p>
+
+        <form class="pdp__form" id="pdpForm" action="{{ routes.cart_add_url }}" method="post" novalidate>
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <fieldset class="pdp__opt" data-index="{{ forloop.index0 }}">
+                <legend>{{ option.name }}<b data-selected>{{ option.selected_value }}</b></legend>
+                {%- if option.name == 'Color' or option.name == 'Colour' -%}
+                  <div class="pdp__colors">
+                    {%- for value in option.values -%}
+                      <button type="button" class="pdp__color{% if value == option.selected_value %} is-active{% endif %}" data-value="{{ value | escape }}" aria-pressed="{% if value == option.selected_value %}true{% else %}false{% endif %}"><i></i>{{ value }}</button>
+                    {%- endfor -%}
+                  </div>
+                {%- else -%}
+                  <div class="sizes">
+                    {%- for value in option.values -%}
+                      <button type="button" class="{% if value == option.selected_value %}is-active{% endif %}" data-value="{{ value | escape }}" aria-pressed="{% if value == option.selected_value %}true{% else %}false{% endif %}">{{ value }}</button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              </fieldset>
+            {%- endfor -%}
+          {%- endunless -%}
+          <input type="hidden" name="id" value="{{ current.id }}" id="pdpVariant">
+          <button class="btn btn--dark btn--full pdp__add" type="submit" id="pdpAdd"{% unless current.available %} disabled{% endunless %}>
+            <span>{% if current.available %}Add to bag{% else %}Sold out{% endif %}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+
+        <ul class="qv__notes pdp__notes">
+          <li>5% of this purchase supports underprivileged football communities</li>
+          <li>Free shipping on orders over $150</li>
+          <li>Name and number printing available for clubs</li>
+        </ul>
+
+        <div class="pdp__acc">
+          <details open>
+            <summary>Details</summary>
+            <div class="rte">{{ product.description }}</div>
+          </details>
+          <details>
+            <summary>Shipping &amp; returns</summary>
+            <div class="rte"><p>Free shipping on orders over $150. Rates for everything else are shown at checkout.</p>
+              {%- if shop.shipping_policy or shop.refund_policy -%}
+                <p>{% if shop.shipping_policy %}<a class="link-u" href="{{ shop.shipping_policy.url }}">Shipping policy</a>{% endif %}{% if shop.shipping_policy and shop.refund_policy %} · {% endif %}{% if shop.refund_policy %}<a class="link-u" href="{{ shop.refund_policy.url }}">Returns &amp; refunds</a>{% endif %}</p>
+              {%- endif -%}
+            </div>
+          </details>
+          <details>
+            <summary>The 5% promise</summary>
+            <div class="rte"><p>5% of every product sold goes to underprivileged football communities: equipment, training, access to programs and a place on the field. <a class="link-u" href="/pages/our-story#impact">Read our story</a></p></div>
+          </details>
+        </div>
+      </div>
+    </div>
   </div>
+  <script type="application/json" id="pdpData">{{ product | json }}</script>
 </section>
 
-{% schema %}
+<section class="pdp-more wrap" id="pdpMore" data-kid="{{ kid }}" hidden>
+  <div class="pdp-more__head">
+    <h2 class="pdp-more__title">Complete the kit</h2>
+    <a class="link-u" href="{{ crumb_url | default: '/pages/teamwear' }}">Shop all {{ crumb_label | default: 'Teamwear' }}</a>
+  </div>
+  <div class="pdp-more__grid" id="pdpMoreGrid"></div>
+</section>
+
+<script type="application/ld+json">
 {
-  "name": "Main Product",
-  "tag": "div",
-  "class": "kulars-section"
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | json }},
+  "image": {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }},
+  "brand": { "@type": "Brand", "name": "KULARS" },
+  "offers": [
+    {%- for v in product.variants -%}
+    { "@type": "Offer", "sku": {{ v.sku | json }}, "price": {{ v.price | divided_by: 100.0 | json }}, "priceCurrency": {{ cart.currency.iso_code | json }},
+      "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}", "url": {{ request.origin | append: v.url | json }} }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
 }
+</script>
+
+{% schema %}
+{ "name": "Product", "tag": "div", "class": "kulars-section" }
 {% endschema %}

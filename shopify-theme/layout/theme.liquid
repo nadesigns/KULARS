@@ -4,7 +4,12 @@
     assign kulars_page = page.handle
   endif
   assign body_class = 'page-' | append: template.name
-  assign kulars_title = page_title | append: ' | ' | append: shop.name
+  assign kulars_title = page_title
+  assign title_check = page_title | downcase
+  assign shop_check = shop.name | downcase
+  unless title_check contains shop_check
+    assign kulars_title = page_title | append: ' | ' | append: shop.name
+  endunless
   assign kulars_desc = page_description
   case kulars_page
     when 'teamwear'
@@ -45,6 +50,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
+<link rel="stylesheet" href="{{ 'kulars-shop.css' | asset_url }}">
 <script>document.documentElement.classList.add('js')</script>
 {{ content_for_header }}
 </head>
@@ -185,7 +191,7 @@
       <div class="bag__total"><span>Subtotal</span><b id="bagTotal">$0</b></div>
       <p class="bag__give" id="bagGive">5% of your order goes to grassroots football.</p>
       <button class="btn btn--dark btn--full" type="button" id="checkoutBtn"><span>Checkout</span></button>
-      <p class="bag__fine">Checkout connects to Shopify in the live build.</p>
+      <p class="bag__fine">Shipping and taxes calculated at checkout.</p>
     </div>
   </div>
 </aside>
@@ -202,7 +208,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>window.KULARS_IMG = {{ 'walk.webp' | asset_url | split: 'walk.webp' | first | json }}; window.KULARS_ROUTES = { cart: {{ routes.cart_url | json }} };</script>
-<script>window.KULARS_SHOP = {
+<script>window.KULARS_CART = {{ cart | json }};
+window.KULARS_SHOP = {
 {%- for product in collections.all.products -%}
   {%- assign kid = '' -%}
   {%- for tag in product.tags -%}{%- if tag contains 'kulars:' -%}{%- assign kid = tag | remove_first: 'kulars:' -%}{%- endif -%}{%- endfor -%}
