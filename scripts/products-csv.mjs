@@ -3,10 +3,13 @@
 // Images point at the copies the Kulars theme already serves from Shopify's CDN;
 // Shopify downloads them into each product on import.
 //   node scripts/products-csv.mjs > shopify-products.csv
+//   ONLY=teamwear node scripts/products-csv.mjs > teamwear-products.csv
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
+// ONLY=teamwear limits the file to one range, so a re-import leaves the other untouched
+const ONLY = process.env.ONLY || '';
 const IMG_BASE = process.env.IMG_BASE || 'https://kulars-store.myshopify.com/cdn/shop/t/2/assets/';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const ctx = { window: {} };
@@ -28,6 +31,7 @@ const HEAD = ['Handle', 'Title', 'Body (HTML)', 'Vendor', 'Type', 'Tags', 'Publi
 
 const rows = [];
 for (const [key, cfg] of Object.entries(D.COLLECTIONS)) {
+  if (ONLY && ONLY !== key) continue;
   for (const p of cfg.products) {
     const handle = slug(p.name);
     const imgs = [...new Set(p.variants.flatMap(v => [...v.imgs, ...(v.extra || [])]))];
